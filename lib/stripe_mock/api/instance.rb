@@ -29,7 +29,10 @@ module StripeMock
   end
 
   def self.alias_stripe_method(new_name, method_object)
-    Stripe::StripeClient.active_client.define_singleton_method(new_name) {|*args| method_object.call(*args) }
+    Stripe::StripeClient.active_client.define_singleton_method(new_name) {|*args|
+      kwargs = (args.count == 3) ? args.pop : {}
+      method_object.call(*args, **kwargs)
+    }
   end
 
   def self.instance; @instance; end
